@@ -1,52 +1,67 @@
 
-CREATE SEQUENCE assignament_idassignament_seq;
-
-CREATE TABLE assignament (
-                idAssignament NUMERIC NOT NULL DEFAULT nextval('assignament_idassignament_seq'),
-                name BYTEA NOT NULL,
-                CONSTRAINT assignament_pk PRIMARY KEY (idAssignament)
+CREATE TABLE assignament(
+    idAssinament SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
 );
 
-
-ALTER SEQUENCE assignament_idassignament_seq OWNED BY assignament.idAssignament;
-
-CREATE SEQUENCE student_id_student_seq;
 
 CREATE TABLE student (
-                id_student INTEGER NOT NULL DEFAULT nextval('student_id_student_seq'),
-                name VARCHAR NOT NULL,
-                lastName VARCHAR NOT NULL,
-                e-mail VARCHAR NOT NULL,
-                CONSTRAINT student_pk PRIMARY KEY (id_student)
+    idStudent SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+	lastName TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL
 );
-
-
-ALTER SEQUENCE student_id_student_seq OWNED BY student.id_student;
-
-CREATE SEQUENCE homework_id_homework_seq;
 
 CREATE TABLE homework (
-                id_homework INTEGER NOT NULL DEFAULT nextval('homework_id_homework_seq'),
-                id_student INTEGER NOT NULL,
-                idAssignament NUMERIC NOT NULL,
-                title VARCHAR NOT NULL,
-                dateOfPresentation DATE NOT NULL,
-                CONSTRAINT homework_pk PRIMARY KEY (id_homework, id_student, idAssignament)
+    idHomeWork SERIAL PRIMARY KEY,
+    idAssignament INT NOT NULL REFERENCES assignament(idAssinament),
+    title TEXT NOT NULL,
+    description TEXT,
+    due_date DATE
 );
 
 
-ALTER SEQUENCE homework_id_homework_seq OWNED BY homework.id_homework;
+CREATE TABLE submission (
+    submission_id SERIAL PRIMARY KEY,
+    idStudent INT NOT NULL REFERENCES student(idStudent),
+    idHomeWork INT NOT NULL REFERENCES homework(idHomeWork),
+    comment TEXT,
+    submission_date DATE,
+    grade FLOAT
+);
 
-ALTER TABLE homework ADD CONSTRAINT assignament_homework_fk
-FOREIGN KEY (idAssignament)
-REFERENCES assignament (idAssignament)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
+CREATE TABLE file (
+    idFile SERIAL PRIMARY KEY,
+    submission_id INT NOT NULL REFERENCES submission(submission_id),
+    fileContent BYTEA NOT NULL,
+    fileType TEXT NOT NULL
+);
 
-ALTER TABLE homework ADD CONSTRAINT student_homework_fk
-FOREIGN KEY (id_student)
-REFERENCES student (id_student)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
+
+CREATE TABLE student_assignament (
+    idStudent INT NOT NULL REFERENCES student(idStudent),
+    idAssignament INT NOT NULL REFERENCES assignament(idAssinament),
+    PRIMARY KEY (idStudent, idAssignament)
+);
+
+CREATE TABLE student_homework (
+    idStudent INT NOT NULL REFERENCES student(idStudent),
+    idHomeWork INT NOT NULL REFERENCES homework(idHomeWork),
+    PRIMARY KEY (idStudent, idHomeWork)
+);
+
+
+CREATE OR REPLACE FUNCTION GetNextHomeworks()
+RETURNS TABLE (name_student TEXT, title TEXT, email TEXT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        e.name,
+		t.title,
+		e.email
+    FROM student_homework et
+    JOIN student e ON et.idStudent = e.idStudent
+    JOIN homework t ON et.idHomeWork = t.idHomeWork
+    WHERE t.due_date >= CURRENT_DATE AND t.due_date <= CURRENT_DATE + INTERVAL '2' DAY;
+END;
+$$ LANGUAGE plpgsql;
