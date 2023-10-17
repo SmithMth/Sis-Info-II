@@ -56,7 +56,6 @@ def get_subject_name(assignment_id):
         return result[0]
     return None
 
-
 def get_student_grades(student_id):
     # Utiliza la conexión de la base de datos proporcionada en los métodos de conexión
     with get_connection() as conn:
@@ -65,6 +64,9 @@ def get_student_grades(student_id):
             cursor.callproc("get_student_grades", (student_id,))
             
             # Recupera los resultados
-            results = cursor.fetchall()
-    
+            results = cursor.fetc
     return results
+
+def set_student(student_id):
+    # Utiliza la conexión de la base de datos proporcionada en los métodos de conexión
+    pass
