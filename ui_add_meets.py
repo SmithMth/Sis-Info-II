@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkcalendar import Calendar
 from tkinter import messagebox
+from tkinter import ttk
 import psycopg2
 
 def generate_meet_link():
@@ -19,6 +20,12 @@ def generate_meet_link():
             password="WCWL5On4oVwb5AOnWjDYGi5KCvyiAY"
         )
         cursor = connection.cursor()
+        query = """
+            SELECT idassinament 
+            FROM subject 
+            WHERE name = %s
+        """#---------------
+        cursor.execute(query,)
         cursor.callproc('insertar_meet', (1, 1, start_date, end_date, time, meet_link))
         connection.commit()
         messagebox.showinfo("Éxito", "Datos insertados correctamente")
@@ -50,7 +57,19 @@ time_label.pack()
 time_entry = tk.Entry(window)
 time_entry.pack()
 
+# Agregar el Combobox para las materias
+# Lista de nombres de materias
+materias = ["Fisica","Matemacica","Quimica"]
+materia_label = tk.Label(window, text="Selecciona una materia:")
+materia_label.pack()
+materia_combobox = ttk.Combobox(window, values=materias)
+materia_combobox.pack()
+materia_combobox.set(materias[0])  # Establece el valor predeterminado
+
+
+
 generate_button = tk.Button(window, text="Programar y Generar Enlace", command=generate_meet_link)
 generate_button.pack()
+
 
 window.mainloop()
