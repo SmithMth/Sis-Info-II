@@ -68,5 +68,6 @@ def get_student_grades(student_id):
     return results
 
 def set_student(student_id):
+    #FUlll
     # Utiliza la conexión de la base de datos proporcionada en los métodos de conexión
     pass
