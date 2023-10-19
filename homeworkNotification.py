@@ -32,8 +32,8 @@ def send_notification():
 
     smtp_server = 'smtp.gmail.com'  
     smtp_port = 587  
-    username = ''
-    password = ''
+    username = 'fantasticos705@gmail.com'
+    password = 'wdoy xmzx zcwt recw'
 
     
     sender = ''
