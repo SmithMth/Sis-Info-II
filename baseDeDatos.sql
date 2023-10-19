@@ -51,6 +51,13 @@ CREATE TABLE student_homework (
 );
 
 
+CREATE TABLE notes (
+    id_notes SERIAL PRIMARY KEY,
+    id_student INT REFERENCES student(idStudent),
+    content TEXT NOT NULL,
+    date_created DATE NOT NULL
+);
+
 CREATE OR REPLACE FUNCTION GetNextHomeworks()
 RETURNS TABLE (name_student TEXT, title TEXT, email TEXT) AS $$
 BEGIN
