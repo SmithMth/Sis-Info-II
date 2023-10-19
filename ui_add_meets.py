@@ -8,6 +8,7 @@ def generate_meet_link():
     start_date = cal_start.get_date()
     end_date = cal_end.get_date()
     time = time_entry.get()
+    subject = subject_combobox.get()
     # Genera el enlace de Google Meet
     meet_link = "https://meet.google.com/gxh-qqgc-vin"
     #coneccion a la base de datos
@@ -24,9 +25,11 @@ def generate_meet_link():
             SELECT idassinament 
             FROM subject 
             WHERE name = %s
-        """#---------------
-        cursor.execute(query,)
-        cursor.callproc('insertar_meet', (1, 1, start_date, end_date, time, meet_link))
+        """
+        cursor.execute(query,subject)
+        result = int(cursor.fetchone()) 
+
+        cursor.callproc('insertar_meet', (1, result, start_date, end_date, time, meet_link))
         connection.commit()
         messagebox.showinfo("Éxito", "Datos insertados correctamente")
         
@@ -37,7 +40,11 @@ def generate_meet_link():
     finally:
         if connection:
             cursor.close()
-            connection.close()    
+            connection.close()  
+
+
+def get_subjects():
+
 #--------------------------------------------------------------------------------------------------
     
 
@@ -59,12 +66,12 @@ time_entry.pack()
 
 # Agregar el Combobox para las materias
 # Lista de nombres de materias
-materias = ["Fisica","Matemacica","Quimica"]
-materia_label = tk.Label(window, text="Selecciona una materia:")
-materia_label.pack()
-materia_combobox = ttk.Combobox(window, values=materias)
-materia_combobox.pack()
-materia_combobox.set(materias[0])  # Establece el valor predeterminado
+subjects = get_subjects()
+subject_label = tk.Label(window, text="Selecciona una materia:")
+subject_label.pack()
+subject_combobox = ttk.Combobox(window, values=subjects)
+subject_combobox.pack()
+subject_combobox.set(subjects[0])  # Establece el valor predeterminado
 
 
 

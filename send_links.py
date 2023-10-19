@@ -73,7 +73,7 @@ def send_meet(name, name_subject, link, email):
     message['From'] = sender
     message['To'] = addressee
     message['Subject'] = name_subject
-    body = f"Hola {name}, aquí está el enlace de la reunión: {link}"
+    body = f"Hola estimado {name}, aquí está el enlace de la reunión: {link}, para {name_subject}"
     message.attach(MIMEText(body, 'plain'))
 
     try:
@@ -86,4 +86,6 @@ def send_meet(name, name_subject, link, email):
     except Exception as e:
         print("Error al enviar el correo:", str(e))
 
-send_meet("jose","Fisica","https://meet.google.com/cez-rpvx-oun","jacaceresc12@gmail.com")
+send_meet("Jose","Sistemas de Informacion 2","https://meet.google.com/cez-rpvx-oun","jacaceresc12@gmail.com")
+send_meet("Smith","Sistemas de Informacion 2","https://meet.google.com/cez-rpvx-oun","jacaceresc12@gmail.com")
+send_meet("Saul","Sistemas de Informacion 2","https://meet.google.com/cez-rpvx-oun","jacaceresc12@gmail.com")
