@@ -28,8 +28,8 @@ def generate_meet_link():
         """
         cursor.execute(query,subject)
         result = int(cursor.fetchone()) 
-
-        cursor.callproc('insertar_meet', (1, result, start_date, end_date, time, meet_link))
+        #falta corregir el id de maestro 
+        cursor.callproc('insertar_meet', (2, result, start_date, end_date, time, meet_link))
         connection.commit()
         messagebox.showinfo("Éxito", "Datos insertados correctamente")
         
@@ -42,8 +42,31 @@ def generate_meet_link():
             cursor.close()
             connection.close()  
 
-
 def get_subjects():
+    answer = []
+    connection = None  # Inicializa la variable connection como None
+    try:
+        # Conectarse a la base de datos
+        connection = psycopg2.connect(
+            host="b0zyrecsgde9whh1dmka-postgresql.services.clever-cloud.com",
+            database="b0zyrecsgde9whh1dmka",
+            user="uehhymdo1hkrhqcxc3qz",
+            password="WCWL5On4oVwb5AOnWjDYGi5KCvyiAY")
+        cursor = connection.cursor()
+        query = """SELECT name FROM subject"""
+        cursor.execute(query,)
+        answer = cursor.fetchall()
+    
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error al conectar", error)
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close() 
+
+    return answer
+
 
 #--------------------------------------------------------------------------------------------------
     

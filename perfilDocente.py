@@ -1,39 +1,71 @@
-class Docente:
-    def __init__(self, nombre, titulo, bio, experiencia, educacion):
-        self.nombre = nombre
-        self.titulo = titulo
-        self.bio = bio
-        self.experiencia = experiencia
-        self.educacion = educacion
+import tkinter as tk
+from tkinter import ttk
 
-# Datos de ejemplo de perfil docente
-docente_ejemplo = Docente(
-    nombre="Juan Pérez",
-    titulo="Profesor de Matemáticas",
-    bio="Apasionado por la enseñanza de las matemáticas.",
-    experiencia=[
-        {"institucion": "Colegio XYZ", "curso": "Álgebra", "fechas": "2018-2022"},
-        {"institucion": "Escuela ABC", "curso": "Cálculo", "fechas": "2015-2018"},
-    ],
-    educacion=[
-        {"institucion": "Universidad 123", "titulo": "Licenciatura en Matemáticas", "fecha": "2014"},
-        {"institucion": "Universidad 456", "titulo": "Maestría en Educación", "fecha": "2019"},
-    ]
-)
+# Datos de ejemplo de los docentes
+docentes = [
+    {
+        "nombre": "Profesor 1",
+        "carrera": "Matemáticas",
+        "foto_url": "url_de_la_foto_1.jpg"
+    },
+    {
+        "nombre": "Profesor 2",
+        "carrera": "Física",
+        "foto_url": "url_de_la_foto_2.jpg"
+    },
+    # Agrega más docentes aquí
+]
 
-# Función para mostrar el perfil del docente
 def mostrar_perfil(docente):
-    print(f"Nombre: {docente.nombre}")
-    print(f"Título: {docente.titulo}")
-    print(f"Biografía: {docente.bio}")
+    # Función para mostrar el perfil de un docente en la ventana de perfil
+    perfil_nombre.set(docente["nombre"])
+    perfil_carrera.set(docente["carrera"])
+    # Puedes cargar la foto del docente aquí (reemplaza la URL)
 
-    print("\nExperiencia Docente:")
-    for experiencia in docente.experiencia:
-        print(f"- {experiencia['institucion']} - {experiencia['curso']} ({experiencia['fechas']})")
+# Función para cambiar el docente seleccionado
+def cambiar_docente(event):
+    selected_docente = lista_docentes.selection()[0]
+    docente = docentes[selected_docente]
+    mostrar_perfil(docente)
 
-    print("\nFormación Académica:")
-    for educacion in docente.educacion:
-        print(f"- {educacion['institucion']} - {educacion['titulo']} ({educacion['fecha']})")
+# Crear ventana principal
+root = tk.Tk()
+root.title("Perfiles de Docentes")
 
-# Mostrar el perfil del docente de ejemplo
-mostrar_perfil(docente_ejemplo)
+# Crear una lista de docentes
+lista_docentes = ttk.Treeview(root, columns=("Nombre", "Carrera"))
+lista_docentes.heading("#1", text="Nombre")
+lista_docentes.heading("#2", text="Carrera")
+lista_docentes.pack()
+
+# Agregar docentes a la lista
+for i, docente in enumerate(docentes):
+    lista_docentes.insert("", "end", iid=i, values=(docente["nombre"], docente["carrera"]))
+
+# Variables para el perfil del docente
+perfil_nombre = tk.StringVar()
+perfil_carrera = tk.StringVar()
+
+# Crear un marco para el perfil
+marco_perfil = tk.Frame(root)
+marco_perfil.pack(side="right")
+
+# Etiqueta para el nombre del docente
+etiqueta_nombre = tk.Label(marco_perfil, textvariable=perfil_nombre, font=("Helvetica", 16))
+etiqueta_nombre.pack()
+
+# Etiqueta para la carrera del docente
+etiqueta_carrera = tk.Label(marco_perfil, textvariable=perfil_carrera)
+etiqueta_carrera.pack()
+
+# Botón para enviar un mensaje al docente (puedes agregar funcionalidad aquí)
+boton_mensaje = tk.Button(marco_perfil, text="Enviar Mensaje")
+boton_mensaje.pack()
+
+# Asociar la selección de la lista a la función cambiar_docente
+lista_docentes.bind("<<TreeviewSelect>>", cambiar_docente)
+
+# Mostrar el primer docente en la lista
+mostrar_perfil(docentes[0])
+
+root.mainloop()
