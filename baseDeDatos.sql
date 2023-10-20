@@ -46,11 +46,11 @@ CREATE TABLE student_homework (
 CREATE TABLE notes (
     id_notes SERIAL PRIMARY KEY,
     id_student INT REFERENCES student(idStudent),
-    idassinament INT REFERENCES subject(idassinament)
-    nameN TEXT NOT NULL,
-    subjectN TEXT NOT NULL,
-    themeN TEXT NOT NULL,
-    noteN TEXT NOT NULL,
+    idassinament INT REFERENCES subject(idassinament),
+    nameN varchar NOT NULL,
+    subjectN varchar NOT NULL,
+    themeN varchar NOT NULL,
+    noteN varchar NOT NULL
 );
 
 CREATE OR REPLACE FUNCTION GetNextHomeworks()
@@ -70,22 +70,22 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION insert_note(
     id_student INT,
-    idassignment INT,
-    nameN TEXT,
-    subjectN TEXT,
-    theme TEXT,
-    note TEXT
+    idassinament INT,
+    nameN varchar,
+    subjectN varchar,
+    themeN varchar,
+    noteN varchar
 ) RETURNS void AS $$
 BEGIN
-    INSERT INTO notes (id_student, idassignment, nameN, subjectN, themeN, noteN)
-    VALUES (id_student, idassignment, nameN, subjectN, themeN, noteN);
+    INSERT INTO notes (id_student, idassinament, nameN, subjectN, themeN, noteN)
+    VALUES (id_student, idassinament, nameN, subjectN, themeN, noteN);
 END;
 $$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION is_student_enrolled(
     student_id INT,
-    subjectName TEXT
+    subject_name TEXT
 ) RETURNS BOOLEAN AS $$
 DECLARE
     result BOOLEAN;
@@ -95,7 +95,7 @@ BEGIN
         SELECT 1
         FROM student_assignament sa
         INNER JOIN subject s ON sa.idAssignament = s.idassinament
-        WHERE sa.idStudent = student_id AND s.name = subjectName
+        WHERE sa.idStudent = student_id AND s.name = subject_name
     ) INTO result;
 
     RETURN result;
