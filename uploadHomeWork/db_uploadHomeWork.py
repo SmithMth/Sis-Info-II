@@ -55,6 +55,68 @@ def get_subject_name(assignment_id):
     if result:
         return result[0]
     return None
+def get_all_classrooms():
+    """Retrieve all classrooms."""
+    with get_connection() as con:
+        with con.cursor() as cur:
+            cur.execute("SELECT classroom_id, name, capacity FROM classrooms;")
+            classrooms = cur.fetchall()
+    return classrooms
+
+def get_available_time_slots(classroom_id, date):
+    """Get available time slots for a specific classroom and date."""
+    with get_connection() as con:
+        with con.cursor() as cur:
+            query = """
+            SELECT time_slot_id, start_time, end_time
+            FROM time_slots
+            WHERE time_slot_id NOT IN (
+                SELECT time_slot_id
+                FROM classroom_reservations
+                WHERE classroom_id = %s AND reservation_date = %s
+            );
+            """
+            cur.execute(query, (classroom_id, date))
+            time_slots = cur.fetchall()
+    return time_slots
+def get_all_time_slots():
+    """Retrieve all time slots."""
+    with get_connection() as con:
+        with con.cursor() as cur:
+            cur.execute("SELECT time_slot_id, start_time, end_time FROM time_slots;")
+            time_slots = cur.fetchall()
+    return time_slots
+
+
+
+def reserve_classroom(classroom_id, time_slot_id, student_id, date):
+    """Reserve a classroom for a specific date and time."""
+    with get_connection() as con:
+        with con.cursor() as cur:
+            query = """
+            INSERT INTO classroom_reservations (classroom_id, time_slot_id, student_id, reservation_date)
+            VALUES (%s, %s, %s, %s);
+            """
+            cur.execute(query, (classroom_id, time_slot_id, student_id, date))
+        con.commit()
+
+def get_student_reservations(student_id):
+    """Retrieve all reservations for a specific student."""
+    with get_connection() as con:
+        with con.cursor() as cur:
+            query = """
+            SELECT c.name, c.capacity, t.start_time, t.end_time
+            FROM classroom_reservations as r
+            JOIN classrooms as c ON r.classroom_id = c.classroom_id
+            JOIN time_slots as t ON r.time_slot_id = t.time_slot_id
+            WHERE r.student_id = %s;
+            """
+            cur.execute(query, (student_id,))
+            reservations = cur.fetchall()
+    return reservations
+
+
+#Fin reserva aulas ---------------------------------------------------------------
 
 def get_student_grades(student_id):
     # Utiliza la conexión de la base de datos proporcionada en los métodos de conexión
