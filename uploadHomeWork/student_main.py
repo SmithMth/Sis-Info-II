@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import kardex_viewer 
 import ui_main_window, ui_add_meets
+import teacher_main
 
 def show_kardex_content():
     # Elimina todos los widgets existentes en frame_kardex
@@ -19,7 +20,7 @@ def show_horarios_content():
     ui_add_meets.view_meeting_creation()
 
 def show_tareas_asignadas_content():
-    pass
+    teacher_main.vistaCrearExamen()
 
 if __name__ == "__main__":
     root = tk.Tk()
