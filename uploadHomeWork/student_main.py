@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 import kardex_viewer 
+import ui_main_window, ui_add_meets
 
 def show_kardex_content():
     # Elimina todos los widgets existentes en frame_kardex
@@ -12,10 +13,10 @@ def show_kardex_content():
 
 
 def show_inscripciones_content():
-    pass
+    ui_main_window.run_entregar_tarea()
 
 def show_horarios_content():
-    pass
+    ui_add_meets.view_meeting_creation()
 
 def show_tareas_asignadas_content():
     pass

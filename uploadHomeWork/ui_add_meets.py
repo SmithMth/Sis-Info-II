@@ -15,10 +15,10 @@ def generate_meet_link():
     try:
         # Conectarse a la base de datos
         connection = psycopg2.connect(
-            host="b0zyrecsgde9whh1dmka-postgresql.services.clever-cloud.com",
-            database="b0zyrecsgde9whh1dmka",
-            user="uehhymdo1hkrhqcxc3qz",
-            password="WCWL5On4oVwb5AOnWjDYGi5KCvyiAY"
+            database="sisII_FINAL",
+            user="postgres",
+            password="123456",
+            host="localhost"
         )
         cursor = connection.cursor()
         query = """
@@ -48,10 +48,10 @@ def get_subjects():
     try:
         # Conectarse a la base de datos
         connection = psycopg2.connect(
-            host="b0zyrecsgde9whh1dmka-postgresql.services.clever-cloud.com",
-            database="b0zyrecsgde9whh1dmka",
-            user="uehhymdo1hkrhqcxc3qz",
-            password="WCWL5On4oVwb5AOnWjDYGi5KCvyiAY")
+            database="sisII_FINAL",
+            user="postgres",
+            password="123456",
+            host="localhost")
         cursor = connection.cursor()
         query = """SELECT name FROM subject"""
         cursor.execute(query,)
@@ -70,36 +70,36 @@ def get_subjects():
 
 #--------------------------------------------------------------------------------------------------
     
+def view_meeting_creation ():
+    window = tk.Tk()
+    window.title("Programar Videollamada")
 
-window = tk.Tk()
-window.title("Programar Videollamada")
+    # Agregar el calendario de fecha de inicio
+    cal_start = Calendar(window, date_pattern='yyyy-mm-dd')
+    cal_start.pack()
 
-# Agregar el calendario de fecha de inicio
-cal_start = Calendar(window, date_pattern='yyyy-mm-dd')
-cal_start.pack()
+    # Agregar el calendario de fecha de finalización
+    cal_end = Calendar(window, date_pattern='yyyy-mm-dd')
+    cal_end.pack()
 
-# Agregar el calendario de fecha de finalización
-cal_end = Calendar(window, date_pattern='yyyy-mm-dd')
-cal_end.pack()
+    time_label = tk.Label(window, text="Hora (HH:MM):")
+    time_label.pack()
+    time_entry = tk.Entry(window)
+    time_entry.pack()
 
-time_label = tk.Label(window, text="Hora (HH:MM):")
-time_label.pack()
-time_entry = tk.Entry(window)
-time_entry.pack()
-
-# Agregar el Combobox para las materias
-# Lista de nombres de materias
-subjects = get_subjects()
-subject_label = tk.Label(window, text="Selecciona una materia:")
-subject_label.pack()
-subject_combobox = ttk.Combobox(window, values=subjects)
-subject_combobox.pack()
-subject_combobox.set(subjects[0])  # Establece el valor predeterminado
-
-
-
-generate_button = tk.Button(window, text="Programar y Generar Enlace", command=generate_meet_link)
-generate_button.pack()
+    # Agregar el Combobox para las materias
+    # Lista de nombres de materias
+    subjects = get_subjects()
+    subject_label = tk.Label(window, text="Selecciona una materia:")
+    subject_label.pack()
+    subject_combobox = ttk.Combobox(window, values=subjects)
+    subject_combobox.pack()
+    subject_combobox.set(subjects[0])  # Establece el valor predeterminado
 
 
-window.mainloop()
+
+    generate_button = tk.Button(window, text="Programar y Generar Enlace", command=generate_meet_link)
+    generate_button.pack()
+
+
+    window.mainloop()

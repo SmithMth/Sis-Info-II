@@ -1,10 +1,10 @@
 import psycopg2
 
 # Configuración de conexión
-DB_NAME = "b0zyrecsgde9whh1dmka"
-DB_USER = "uehhymdo1hkrhqcxc3qz"
-DB_PASS = "WCWL5On4oVwb5AOnWjDYGi5KCvyiAY"
-DB_HOST = "b0zyrecsgde9whh1dmka-postgresql.services.clever-cloud.com"
+DB_NAME = "sisII_FINAL"
+DB_USER = "postgres"
+DB_PASS = "123456"
+DB_HOST = "localhost"
 DB_PORT = "5432"
 
 def get_connection():
@@ -126,7 +126,7 @@ def get_student_grades(student_id):
             cursor.callproc("get_student_grades", (student_id,))
             
             # Recupera los resultados
-            results = cursor.fetc
+            results = cursor.fetchall()
     return results
 
 def set_student(student_id):
