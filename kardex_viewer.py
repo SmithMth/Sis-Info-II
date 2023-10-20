@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk  # Importa el módulo ttk para el widget Treeview
-import db_uploadHomeWork as database
+from uploadHomeWork import db_uploadHomeWork as database
 
 def show_kardex_content(frame_kardex, student_id):
     # Función para mostrar el contenido del kardex en el frame_kardex proporcionado.

@@ -126,9 +126,5 @@ def get_student_grades(student_id):
             cursor.callproc("get_student_grades", (student_id,))
             
             # Recupera los resultados
-            results = cursor.fetc
+            results = cursor.fetchall()  # Corregido aquí
     return results
-
-def set_student(student_id):
-    # Utiliza la conexión de la base de datos proporcionada en los métodos de conexión
-    pass

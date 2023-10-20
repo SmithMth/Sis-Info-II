@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.font as tkFont
-import kardex_viewer 
+import kardex_viewer
 
 def show_kardex_content():
     # Elimina todos los widgets existentes en frame_kardex
@@ -9,7 +9,6 @@ def show_kardex_content():
 
     # Llama a la función para mostrar el nuevo contenido
     kardex_viewer.show_kardex_content(frame_kardex, 1)
-
 
 def show_inscripciones_content():
     pass
