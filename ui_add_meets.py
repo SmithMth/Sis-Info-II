@@ -26,8 +26,8 @@ def generate_meet_link():
             FROM subject 
             WHERE name = %s
         """
-        cursor.execute(query,subject)
-        result = int(cursor.fetchone()) 
+        cursor.execute(query,(subject,))
+        result = cursor.fetchone()
         #falta corregir el id de maestro 
         cursor.callproc('insertar_meet', (2, result, start_date, end_date, time, meet_link))
         connection.commit()
