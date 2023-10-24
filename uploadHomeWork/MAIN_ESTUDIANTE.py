@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import db_uploadHomeWork as database
 import kardex_viewer,iu_apuntes,ui_room_reservation,proffesor_profile,ui_main_window,db_uploadHomeWork
+from from_res import ExamSolverApp
+exams_dict = {}
 
 def get_materias(student_name):
     # Aquí va tu función para recuperar las materias. Esto es solo un ejemplo.
@@ -49,6 +51,7 @@ def ventanta_estudiante():
     root.geometry("800x500")
 
     main_container = ttk.Frame(root)
+    
     main_container.pack(fill=tk.BOTH, expand=True)
 
     student_name = "Saul"  # Suponiendo que queremos ver las materias para el estudiante "Saul"
@@ -88,29 +91,28 @@ def ventanta_estudiante():
     frame_kardex.grid(row=4, column=0, columnspan=2, sticky='nsew')
     
     
+    global combo    
+     # Añadir ComboBox en main_container
+    combo = ttk.Combobox(main_container, values=get_exams_list())
+    combo.grid(row=5, column=0, padx=20, pady=10)  # Ajusta las coordenadas de la cuadrícula como desees
     
-    # Adding combobox drop down list
-    exams = get_exams_list()
-    exam_names = [exam[1] for exam in exams]  # Extract exam names from the list of tuples
-    combo['values'] = exam_names
-
-    combo.pack()
-    combo.current(0)  # set the selected item
-
-    # Add button
-    btn = tk.Button(root, text="Ingresar al Examen")
-    btn.pack()
+    # Añadir botón en main_container
+    btn = ttk.Button(main_container, text="Ingresar al Examen")
+    btn.grid(row=5, column=1, padx=20, pady=10)  # Ajusta las coordenadas de la cuadrícula como desees
     btn.bind('<Button-1>', enter_exam)
+
 
     root.mainloop()
     
 def get_exams_list():
+    global exams_dict
     connection = database.get_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT id, name FROM Exams")
     exams = cursor.fetchall()
+    exams_dict = {name: id for id, name in exams}
     connection.close()
-    return exams
+    return [name for id, name in exams]
 
 def enter_exam(event):
     selected_exam_name = combo.get()
