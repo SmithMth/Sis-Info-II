@@ -1,89 +1,122 @@
 import tkinter as tk
+from tkinter import Canvas, Scrollbar
+import db_uploadHomeWork as database
+import json
 
-def add_multiple_choice(frame):
-    inner_frame = tk.Frame(frame)
-    inner_frame.pack()
-    
-    tk.Label(inner_frame, text="Pregunta de selección múltiple:").grid(row=0, column=0)
-    tk.Entry(inner_frame, width=50).grid(row=0, column=1)
+class ExamGeneratorApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Generador de Examen")
+        self.root.geometry("800x600")
 
-    tk.Label(inner_frame, text="Número de opciones:").grid(row=1, column=0)
-    num_options = tk.Spinbox(inner_frame, from_=2, to=10, width=5)
-    num_options.grid(row=1, column=1)
+        self.all_options = []
+        self.all_questions = []
 
-    tk.Button(inner_frame, text="Actualizar", command=lambda: update_options(options_frame, num_options)).grid(row=1, column=2)
+        self.initialize_ui()
 
-    options_frame = tk.Frame(inner_frame)
-    options_frame.grid(row=2, columnspan=3)
+    def initialize_ui(self):
+        self.btn_frame = tk.Frame(self.root)
+        self.btn_frame.pack(side="top", fill="x")
 
-    tk.Label(inner_frame, text="Respuesta correcta:").grid(row=3, column=0)
-    tk.Entry(inner_frame, width=20).grid(row=3, column=1)
-    tk.Label(inner_frame, text="---").grid(row=4, columnspan=3)
+        tk.Label(self.btn_frame, text="Nombre del examen: ").pack(side="left")
+        self.exam_name_entry = tk.Entry(self.btn_frame, width=30)
+        self.exam_name_entry.pack(side="left")
 
-def update_options(frame, num_options):
-    for widget in frame.winfo_children():
-        widget.destroy()
-    n = int(num_options.get())
-    for i in range(n):
-        tk.Entry(frame, width=40).pack()
+        add_question_button = tk.Button(self.btn_frame, text="Añadir pregunta", command=self.add_multiple_choice)
+        add_question_button.pack(side="left")
+
+        save_button = tk.Button(self.btn_frame, text="Guardar", command=self.save_to_db)
+        save_button.pack(side="right")
+
+        self.canvas = Canvas(self.root)
+        self.scrollbar = Scrollbar(self.root, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.frame_on_canvas = tk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.frame_on_canvas, anchor="nw")
+
+        self.frame_on_canvas.bind("<Configure>", self.on_configure)
+        self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
+
+    def add_multiple_choice(self):
+        inner_frame = tk.Frame(self.frame_on_canvas)
+        inner_frame.pack(fill='x', padx=10, pady=10)
+
+        tk.Label(inner_frame, text="Pregunta de selección múltiple:").grid(row=0, column=0)
+        question_entry = tk.Entry(inner_frame, width=50)
+        question_entry.grid(row=0, column=1, columnspan=3)
+
+        tk.Label(inner_frame, text="Número de opciones:").grid(row=1, column=0)
+        num_options = tk.Spinbox(inner_frame, from_=2, to=10, width=5)
+        num_options.grid(row=1, column=1)
+
+        set_button = tk.Button(inner_frame, text="Establecer", command=lambda: self.update_options(inner_frame, num_options, set_button))
+        set_button.grid(row=1, column=2)
+        self.all_questions.append((inner_frame, question_entry))
         
-def add_true_false(frame):
-    inner_frame = tk.Frame(frame)
-    inner_frame.pack()
-    
-    tk.Label(inner_frame, text="Pregunta de Verdadero o Falso:").grid(row=0, column=0)
-    tk.Entry(inner_frame, width=50).grid(row=0, column=1)
+    def update_options(self, frame, num_options, set_button):
+        options_frame = tk.Frame(frame)
+        options_frame.grid(row=2, columnspan=4)
 
-    tk.Label(inner_frame, text="Respuesta correcta:").grid(row=1, column=0)
-    tk.Entry(inner_frame, width=20).grid(row=1, column=1)
-    tk.Label(inner_frame, text="---").grid(row=2, columnspan=2)
+        n = int(num_options.get())
+        current_options = []
+        for i in range(n):
+            var = tk.IntVar()
+            tk.Checkbutton(options_frame, text=f"Opción {i + 1}", variable=var).grid(row=i, column=0)
+            entry = tk.Entry(options_frame, width=40)
+            entry.grid(row=i, column=1)
+            current_options.append((var, entry))
 
-def add_matching(frame):
-    inner_frame = tk.Frame(frame)
-    inner_frame.pack()
-
-    tk.Label(inner_frame, text="Pregunta de Asociar con flechas:").grid(row=0, column=0)
-    tk.Entry(inner_frame, width=50).grid(row=0, column=1)
-
-    tk.Label(inner_frame, text="Número de emparejamientos:").grid(row=1, column=0)
-    num_pairs = tk.Spinbox(inner_frame, from_=2, to=10, width=5)
-    num_pairs.grid(row=1, column=1)
-
-    tk.Button(inner_frame, text="Actualizar", command=lambda: update_pairs(pairs_frame, num_pairs)).grid(row=1, column=2)
-
-    pairs_frame = tk.Frame(inner_frame)
-    pairs_frame.grid(row=2, columnspan=3)
-
-    tk.Label(inner_frame, text="---").grid(row=3, columnspan=3)
-
-def update_pairs(frame, num_pairs):
-    for widget in frame.winfo_children():
-        widget.destroy()
-    n = int(num_pairs.get())
-    for i in range(n):
-        tk.Entry(frame, width=20).pack(side="left")
-        tk.Label(frame, text="<->").pack(side="left")
-        tk.Entry(frame, width=20).pack(side="left")
-        tk.Button(frame, text="Eliminar").pack(side="left")
+        self.all_options.append(current_options)
         
-def add_q_and_a(frame):
-    tk.Label(frame, text="Pregunta y Respuesta:").pack()
-    tk.Entry(frame, width=50).pack()
-    tk.Label(frame, text="---").pack()
+        delete_button = tk.Button(frame, text="Eliminar Pregunta", command=lambda: self.delete_question(frame, current_options))
+        delete_button.grid(row=3, columnspan=4)
+        
+        set_button.destroy()
 
-def vista_creacionExamen():
+    def delete_question(self, inner_frame, current_options):
+        inner_frame.destroy()
+        self.all_questions = [(frame, entry) for frame, entry in self.all_questions if frame != inner_frame]
+        self.all_options.remove(current_options)
+
+    def save_to_db(self):
+        conn = database.get_connection()
+        cur = conn.cursor()
+        exam_name = self.exam_name_entry.get()
+        questions_and_options = {
+            "questions": []
+        }
+
+        for idx, (_, question_entry) in enumerate(self.all_questions):
+            question = {
+                "text": question_entry.get(),
+                "options": []
+            }
+            for var, entry in self.all_options[idx]:
+                option = {
+                    "text": entry.get(),
+                    "is_checked": bool(var.get())
+                }
+                question["options"].append(option)
+            
+            questions_and_options["questions"].append(question)
+
+        cur.callproc('save_exam', [exam_name, json.dumps(questions_and_options)])
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+    def on_configure(self, event):
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+    def on_mousewheel(self, event):
+        self.canvas.yview_scroll(-1*(event.delta//120), "units")
+
+if __name__ == "__main__":
     root = tk.Tk()
-    root.title("Generador de Examen")
-
-    frame_content = tk.Frame(root)
-    frame_content.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
-    btn_frame = tk.Frame(root)
-    btn_frame.pack(side="top")
-
-    tk.Button(btn_frame, text="Selección múltiple", command=lambda: add_multiple_choice(frame_content)).grid(row=0, column=0, padx=10)
-    tk.Button(btn_frame, text="Verdadero o Falso", command=lambda: add_true_false(frame_content)).grid(row=0, column=1, padx=10)
-    tk.Button(btn_frame, text="Asociar con flechas", command=lambda: add_matching(frame_content)).grid(row=0, column=2, padx=10)
-    tk.Button(btn_frame, text="Pregunta y Respuesta", command=lambda: add_q_and_a(frame_content)).grid(row=0, column=3, padx=10)
-
+    app = ExamGeneratorApp(root)
     root.mainloop()
