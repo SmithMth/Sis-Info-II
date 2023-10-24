@@ -10,6 +10,22 @@ DB_PORT = "5432"
 def get_connection():
     return psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT)
 
+
+
+def get_materias(student_id):
+    with get_connection() as con:
+        with con.cursor() as cur:
+            query = """
+                SELECT s.name 
+                FROM subjects_taken st
+                JOIN subject s ON st.subject_id = st.id
+                WHERE st.student_id = %s;
+            """
+            cur.execute(query, (student_id,))
+            materias = [row[0] for row in cur.fetchall()]
+    return materias
+
+
 def add_submission(idStudent, idHomeWork, comment, submission_date):
     with get_connection() as con:
         with con.cursor() as cur:

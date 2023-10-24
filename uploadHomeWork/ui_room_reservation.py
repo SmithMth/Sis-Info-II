@@ -76,21 +76,22 @@ def show_student_reservations():
     lbl_time_header = tk.Label(frame_table, text="Tiempo", font=("Arial", 16, "bold"))
     lbl_time_header.grid(row=0, column=2, padx=10, pady=10)
 
+def show_reservar():
+    global root
+    root = tk.Tk()
+    root.title("Sistema de Reservas")
+    root.geometry("800x500")
 
-root = tk.Tk()
-root.title("Sistema de Reservas")
-root.geometry("800x500")
-
-lbl_title = tk.Label(root, text="Sistema de Reservas de Aulas", font=("Arial", 24, "bold"))
-lbl_title.pack(pady=20)
-btn_my_reservations = tk.Button(root, text="Mis Reservas", command=show_student_reservations, font=("Arial", 20))
-btn_my_reservations.pack(pady=20)
+    lbl_title = tk.Label(root, text="Sistema de Reservas de Aulas", font=("Arial", 24, "bold"))
+    lbl_title.pack(pady=20)
+    btn_my_reservations = tk.Button(root, text="Mis Reservas", command=show_student_reservations, font=("Arial", 20))
+    btn_my_reservations.pack(pady=20)
 
 
-# Mostramos directamente las aulas disponibles en la ventana principal
-for classroom in get_all_classrooms():
-    btn_classroom = tk.Button(root, text=f"{classroom[1]} - Capacidad: {classroom[2]}", 
-                              command=lambda cid=classroom[0]: open_time_slot_selection_window(cid))
-    btn_classroom.pack(pady=10)
+    # Mostramos directamente las aulas disponibles en la ventana principal
+    for classroom in get_all_classrooms():
+        btn_classroom = tk.Button(root, text=f"{classroom[1]} - Capacidad: {classroom[2]}", 
+                                command=lambda cid=classroom[0]: open_time_slot_selection_window(cid))
+        btn_classroom.pack(pady=10)
 
-root.mainloop()
+    root.mainloop()

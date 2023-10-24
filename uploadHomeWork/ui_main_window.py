@@ -3,7 +3,7 @@ import tkinter as tk
 import db_uploadHomeWork as database
 import ui_submission_window as ui_submission_window
 
-def run_entregar_tarea():
+def run_entregar_tarea(materia):
     root = tk.Tk()
     root.title("Información de la Tarea")
     root.geometry("900x500")  
@@ -17,7 +17,7 @@ def run_entregar_tarea():
     assignment_details = database.get_assignment_details(idHomeWork)
 
     # Encabezado con el nombre de la materia
-    lbl_subject = tk.Label(root, text=subject_name, font=("Arial", 24, "bold"), anchor="w", bg='white')  
+    lbl_subject = tk.Label(root, text=materia, font=("Arial", 24, "bold"), anchor="w", bg='white')  
     lbl_subject.place(x=20, y=10)
 
     # Etiqueta "Tarea"
